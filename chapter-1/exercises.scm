@@ -128,3 +128,73 @@
 
 (define (cube-root x)
   (cube-root-iter 1.0 x))
+
+;;; 1.9
+; The first implementation of adding is a recursive process because the
+; interpreter has to remember the state of incrementing the results of the
+; every individual recursive call to + i.e. deferred operations
+; However, the second implementation has all of the relavent information 
+; needed stored in each subsequent call to +
+
+;;; 1.10
+; The Ackermann!
+(define (A x y)
+  (cond ((= y 0) 0)
+        ((= x 0) (* 2 y))
+        ((= y 1) 2)
+        (else (A (- x 1)
+                 (A x (- y 1))))))
+; (A 1 10)
+; (A 0 (A 1 9))
+; (* 2 (A 1 9))
+; (* 2 (A 0 (A 1 8)))
+; (* 2 (* 2 (A 1 8)))
+; (* 2 (* 2 (A 0 (A 1 7))))
+; (* 2 (* 2 (* 2 (A 1 7))))
+; (* 2 (* 2 (* 2 (A 0 (A 1 6)))))
+; (* 2 (* 2 (* 2 (* 2 (A 0 (A 1 5))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (A 1 5))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (A 0 (A 1 4)))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (A 1 4)))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (A 0 (A 1 3))))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (A 1 3))))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (A 0 (A 1 2)))))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (A 1 2)))))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (A 0 (A 1 1))))))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (2))))))))))
+; 2^10 or 2^y
+; 1024
+
+; (A 2 4)
+; (A 1 (A 2 3))
+; (A 1 (A 1 (A 2 2)))
+; (A 1 (A 1 (A 1 (A 2 1))))
+; (A 1 (A 1 (A 1 (2))))
+; (A 1 (A 1 (A 0 (A 1 1))))
+; (A 1 (A 1 (A 0 (2))))
+; (A 1 (A 1 (* 2 2)))
+; (A 1 (A 1 (4)))
+; (A 1 (A 0 (A 1 3)))
+; (A 1 (A 0 (A 0 (A 1 2))))
+; (A 1 (A 0 (A 0 (A 0 (A 1 1)))))
+; (A 1 (A 0 (A 0 (A 0 (2)))))
+; (A 1 (* 2 (* 2 (* 2 2))))
+; (A 1 (16)) ; NOOOOOOO, make it stop!!
+; 2^16 because (A 1 y) is 2^y = 65536
+
+; (A 3 3)
+; (A 2 (A 3 2))
+; (A 2 (A 2 (A 3 1))
+; (A 2 (A 2 (2)))
+; (A 2 (A 1 (A 2 1))
+; (A 2 (A 1 (2)))
+; (A 2 (A 0 (A 1 1)))
+; (A 2 (A 0 (2)))
+; (A 2 (4))
+; (A 1 (A 2 3))
+; 2^(A 2 3) -> (A 2 y) = 2^(A 2 (y-1))
+; 2^(2^(A 2 2))
+; 2^(2^(2^(A 2 1)))
+; 2^(2^(2^(2)))
+; 2^16 = 6536
+

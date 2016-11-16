@@ -190,10 +190,10 @@ x explicitly to each of these procedures.
 ### 1.2.1 Linear Recursion and Iteration
 
 ```scm
-(define (factorial n)
-  (if (= n 1)
-      1
-      (* n factorial(n - 1))))
+(define (factorial n) 
+  (if (= n 1) 
+    1 
+    (* n factorial(n - 1))))
 
 (define (fact n)
   (define (iter prod counter)
@@ -203,10 +203,12 @@ x explicitly to each of these procedures.
               (+ counter 1))))
   (iter 1 1))
 ```
+
+#### Distinction Between A Recursive Process And A Recursive Procedure
 - From one point of view, both of these implementations are the same.
 Both require a number of steps proportional to n to compute n!, both of
 these processes even carry out the same series of multiplications
-- In the first implementation of factorial, however, the bprocess build
+- In the first implementation of factorial, however, the process built
 up a chain of _deferred operations_
   - This type of process, characterized by a chain of deferred
   operations, is called a _recursive process_
@@ -216,5 +218,17 @@ up a chain of _deferred operations_
   _procedure_. Recursive _procedures_ refer to the _procedure_ itself. 
   - When we describe a recursive _process_ we are refering to how the
   _process_ itself evolves not how the _procedure_ itself is defined.
-
-
+  - This might be confusing because most implementations of common
+  languages are designed in such a way that the interpretation of any
+  recursive procedure consumes an amount of memory that grows with the
+  number of procedure calls, even when the process described is, in
+  principle, iterative. As a consequence, these languages tend to
+  describe iterative processes only by resorting to special-purpose
+  "looping constructs" like _do, for, while, etc._
+  - Scheme doesn't share this defect. It executes iterative processes in
+  constant space, even if the iterative process is described by
+  a recursive procedure. An implementation with this property is said to
+  be ___tail recursive___
+  - With a tail recursive implementation, iteration can be expressed
+  using the ordinary procedure call mechanism so that special iteration
+  constructs are useful only as syntactic sugar.
