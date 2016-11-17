@@ -73,3 +73,18 @@
   (cond (predicate then-clause)
         (else else-clause)))
 
+(define fib
+  (lambda (n)
+    (cond ((= n 0) 0)
+          ((= n 1) 1)
+          (else (+ (fib (- n 1))
+                   (fib (- n 2)))))))
+
+(define (fib1 n)
+  (define (fib-iter tar last second)
+    (if (= tar 0)
+        last
+        (fib-iter (- tar 1)
+                  (+ last second)
+                  last)))
+  (fib-iter n 0 1))

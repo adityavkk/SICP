@@ -232,3 +232,48 @@ up a chain of _deferred operations_
   - With a tail recursive implementation, iteration can be expressed
   using the ordinary procedure call mechanism so that special iteration
   constructs are useful only as syntactic sugar.
+
+### 1.2.2 Tree Recursion
+- Consider the evolved process of the fibonacci algorithm defined by the
+following code
+
+```scm
+(define fib
+  (lambda (n)
+    (cond ((= n 0) 0)
+          ((= n 1) 1)
+          (else (+ (fib (- n 1))
+                   (fib (- n 2)))))))
+```
+
+To compute `(fib 5)`, we need to compute `(fib 4)` and `(fib 3)`, and
+for (fib 4) we need `(fib 3)` `(fib 2)` this forms a tree structure. 
+- It is important to note that there is a lot of duplicated work in the
+recursion tree i.e. `(fib 5)` needs `(fib 3)` but `(fib 4)` does also
+and the calculation of `(fib 3)` happens twice. 
+- The value of Fib(n) grows exponentially with n and the number of calls
+to Fib(1) and Fib(0) is Fib(n + 1), therefore the time complexity of
+this implementation is O(Fib(n)) or O(ø^n)
+- The space required for this implementation grows only linearly with
+the input `n`. 
+  - In general, the number of steps required by a tree-recursive process
+  will be proportional to the number of nodes in the tree, and the space
+  required will be proportional to the maximum depth of the tree.
+
+#### An iterative process to calculate fib 
+- The idea is to use a pair of numbers `last` (F(n - 1)) and `second`
+(F(n - 2)) to remember the state of the previous calculations and
+constently update `last <- last + second`, `second <- last` and `target
+<- target - 1` and return the last value when the target you're looking for
+reaches `0`
+
+```scm
+(define (fib1 n)
+  (define (fib-iter tar last second)
+    (if (= tar 0)
+        last
+        (fib-iter (- tar 1)
+                  (+ last second)
+                  last)))
+  (fib-iter n 0 1))
+```
