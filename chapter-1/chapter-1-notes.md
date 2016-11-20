@@ -268,12 +268,63 @@ constently update `last <- last + second`, `second <- last` and `target
 reaches `0`
 
 ```scm
-(define (fib1 n)
-  (define (fib-iter tar last second)
-    (if (= tar 0)
+(define (fib1 n) 
+  (define (fib-iter tar last second) 
+    (if (= tar 0) 
         last
-        (fib-iter (- tar 1)
-                  (+ last second)
-                  last)))
-  (fib-iter n 0 1))
+        (fib-iter (- tar 1) (+ last second) last))) 
+  (fib-iter n 0 1)) 
 ```
+
+- It's fairly straight forward to see that this process requires
+a linear number of steps to complete i.e. n steps.
+
+#### Example: Counting Change
+
+- It is not a big leap to come up with an iterative Fibonacci algorithm.
+However, a problem like coin change has a simple solution as a recursive
+procedure, but isn't straightforwardly translated into an iterative
+process.
+- The problem goes as follows: Can we write a procedure to compute the
+number of ways to change any given amount of money?
+  - For instance, how many ways can we make change of $1.00 given
+  half-dollars, quarters, nickels and pennies? 
+
+##### A Recursive Solution
+- We can think of the ways to change an amount ___a___ using ___n___
+coin types as:
+  - The number of ways to change ___a___ using all but the first coin
+  plus
+  - The number of ways to change ___a___ using at least one of the first
+  coin i.e. the number of ways to make change of amount ___a - d___
+  using the same set of coin denominations.
+- Thus, we can recursively reduce the problem of changing a given amount
+to the problem of changing smaller amounts using fewer kinds of coins.
+- Base Cases: 
+  - If `(= a 0)`, this counts as exactly 1 way of making change
+  - If `(< a 0)`, this counts as 0 ways of making change
+  - If there are no more coins, i.e. `(= n 0)`, this also counts as 0 ways
+
+```scm
+; Coin Change
+(define (change a n)
+  (define (first n)
+    (cond ((= n 1) 1)
+          ((= n 2) 5)
+          ((= n 3) 10)
+          ((= n 4) 25)
+          ((= n 5) 50)))
+  (cond ((= a 0) 1)
+        ((or (< a 0) (= n 0)) 0)
+        (else (+ (change a (- n 1))
+                 (change
+                   (- a (first n))
+                   n)))))
+
+(change 100 5) ; -> 292 ways to make one dollar
+```
+
+- `(change a n)` generates a tree recursive process with duplicated
+calls similar to those in our first implimentation of `fib`
+- It is not obvious how to design a better algorithm for computing the
+result.

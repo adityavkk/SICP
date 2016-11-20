@@ -88,3 +88,18 @@
                   (+ last second)
                   last)))
   (fib-iter n 0 1))
+
+; Coin Change
+(define (change a n)
+  (define (first n)
+    (cond ((= n 1) 1)
+          ((= n 2) 5)
+          ((= n 3) 10)
+          ((= n 4) 25)
+          ((= n 5) 50)))
+  (cond ((= a 0) 1)
+        ((or (< a 0) (= n 0)) 0)
+        (else (+ (change a (- n 1))
+                 (change
+                   (- a (first n))
+                   n)))))
