@@ -328,3 +328,69 @@ to the problem of changing smaller amounts using fewer kinds of coins.
 calls similar to those in our first implimentation of `fib`
 - It is not obvious how to design a better algorithm for computing the
 result.
+
+### 1.2.4 Exponentiation
+- The following algorithm describes a basic exponentiation algorithm in
+a linear recursive process 
+
+```scm
+; Basic Exp recursive
+(define (expt a n)
+  (if (= n 0)
+      a
+      (* a (expt (- n 1)))))
+
+```
+
+- This process requires θ(n) steps and θ(n) space, where n is the
+exponent
+- It isn't too difficult to come up with a linear iterative process for
+exponentiation
+
+```scm
+; Basic Exp Iterative
+(define (expt-iter a n prod)
+  (cond ((= n 0) 1)
+        ((= n 1) prod)
+        (else (expt-iter a (- n 1) (* a prod)))))
+
+(define (expt1 a n)
+  (expt-iter a n a))
+```
+
+- This process requires θ(n) steps and θ(1) space.
+- However, we can compute exponentials in fewer than linear steps by
+___successive squaring___ 
+
+```
+b^8 = b * b * b * b * b * b * b * b
+b^2 = b * b
+b^4 = b^2 * b^2
+b^8 = b^4 * b^4
+```
+
+- This method works for even exponents _n_ but with a slight
+modification we can also account for odd exponents.
+  - note that if n is odd (n - 1) is even
+
+```
+b^n = (b^(n/2))^2 if n is even
+b^n = b * b^(n - 1) if n is odd
+```
+
+- We can express this method as the following procedure:
+
+```scm
+; Successive Squaring
+(define (fast-expt b n)
+  (cond ((= n 0) 1)
+        ((even? n) (square (fast-expt b (/ n 2))))
+        (else (* b (fast-expt b (- n 1))))))
+
+(define (even? n)
+  (= (remainder n 2) 0))
+```
+
+- This `fast-expt` process grows θ(log(n))
+  - To see this, observe that computing `b^2n` only requires one
+  additional multiplication than computing `b^n`

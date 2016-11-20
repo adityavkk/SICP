@@ -103,3 +103,27 @@
                  (change
                    (- a (first n))
                    n)))))
+
+; Basic Exp recursive
+(define (expt a n)
+  (if (= n 0)
+      a
+      (* a (expt (- n 1)))))
+
+; Basic Exp Iterative
+(define (expt-iter a n prod)
+  (cond ((= n 0) 1)
+        ((= n 1) prod)
+        (else (expt-iter a (- n 1) (* a prod)))))
+
+(define (expt1 a n)
+  (expt-iter a n a))
+
+; Successive Squaring
+(define (fast-expt b n)
+  (cond ((= n 0) 1)
+        ((even? n) (square (fast-expt b (/ n 2))))
+        (else (* b (fast-expt b (- n 1))))))
+
+(define (even? n)
+  (= (remainder n 2) 0))
