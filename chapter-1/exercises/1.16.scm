@@ -6,14 +6,14 @@
   (fast-expt-iter b n 1))
 
 (define (fast-expt-iter b n a)
-  (cond ((= n 1) a)
+  (cond ((= n 1) (* b a))
         ((= n 0) 1)
         ((odd? n)
           (fast-expt-iter b (- n 1) (* b a)))
         (else (fast-expt-iter
-                b
+                (square b)
                 (/ n 2)
-                (* a (square b))))))
+                a))))
 
 (define (odd? n)
   (= (remainder n 2) 1))
