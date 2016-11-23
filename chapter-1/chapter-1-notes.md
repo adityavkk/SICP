@@ -394,3 +394,41 @@ b^n = b * b^(n - 1) if n is odd
 - This `fast-expt` process grows θ(log(n))
   - To see this, observe that computing `b^2n` only requires one
   additional multiplication than computing `b^n`
+
+## 1.3 Formulating Abstractions with Higher-Order Procedures
+
+### 1.3.1 Procedures as Arguments
+
+- The general patern of a summation from a to b through c steps of some
+f(n) can be abstracted away onto a higher order procedure
+
+```scm
+(define (sum term a next b)
+  (if (> a b)
+      0
+      (+ (term a)
+         (sum name (next a) b))))
+```
+
+- Notice how we can now define the summation of cubes form a b using our
+sum procedure
+
+```scm
+(define (inc n) (+ n 1))
+(define (sum-cubes a b)
+  (sum cube a inc b))
+```
+
+- Once we have `sum`, we can use it to easily build up an amazing array of
+procedures that can serve as approximations to many mathematical
+functions
+
+```scm
+; For instance the definate integral of a function f between limits
+; a and b can be approximated numerically using the following procedure
+(define (integral f a b dx)
+  (define (add-dx x) (+ x dx))
+  (* (sum f (+ a (/ dx 2.0)) add-dx b)
+     dx))
+(integral cube 0 1 0.01) ; -> 0.249999...
+```
