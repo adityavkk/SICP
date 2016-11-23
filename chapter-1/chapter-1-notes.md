@@ -432,3 +432,53 @@ functions
      dx))
 (integral cube 0 1 0.01) ; -> 0.249999...
 ```
+
+### 1.3.2 Constructing Procedures Using Lambda
+
+- Lambdas are a special form in Lisp that essentially allow us to codify
+procedures
+
+```scm
+(define (plus4 x) (+ x 4))
+; is equivalent to
+(define plus4 (lambda (x) (+ x 4)))
+```
+
+- Lambdas are also useful because they create a local scope since
+they're procedures
+
+```scm
+(define (f x y)
+  ((lambda (a b)
+    (+ (* x (square a))
+       (* y b)
+       (* a b)))
+    (+ 1 (* x y))
+    (- 1 y)))
+```
+
+- This construct is so useful that there is a special form called `let`
+to make its use more convenient.
+
+```scm
+(define (f x y)
+ (let ((a (+ 1 (* x y)))
+       (b (- 1 y)))
+  (+ (* x (square a))
+     (* y b)
+     (* a b))))
+```
+
+- The general form of a `let` expression is
+
+```
+(let ((<var1> <exp1>)
+     (<var2> <exp2>))
+  <body>)
+```
+
+- We don't need a new mechanism in the interpreter for `let`
+expressions. They are simply syntatic sugar for the underlying `lambda`
+_application_ 
+- A `let` expression applies an underlying lambda with the expressions as
+arguments to the `lambda` which substitutes the expressions in the body.
