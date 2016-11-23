@@ -51,4 +51,10 @@
                         q
                         (- count 1)))))
 
+(define (run-fibs n)
+  (if (= n 0)
+      #t
+      ((display (fib n))(run-fibs (- n 1)))))
+
+(run-fibs 10)
 
