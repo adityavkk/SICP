@@ -10,7 +10,15 @@
 (define (sum-of-prime-squares a b)
   (filtered-accumulate prime? + 0 square a inc b)) ; <- (sum-of-prime-squares 2 5) = 38
 
+(define (prod-of-rel-prime n)
+  (define (rel-prime? i)
+    (if (= (gcd i n) 1)
+        #t
+        #f))
+  (filtered-accumulate rel-prime? * 1 ident 2 inc (- n 1)))
+
 (define (inc x) (+ 1 x))
+(define (ident x) x)
 
 (define (prime? n)
   (fermat-test n 100))
