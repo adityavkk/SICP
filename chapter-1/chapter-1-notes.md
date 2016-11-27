@@ -475,6 +475,10 @@ to make its use more convenient.
 (let ((<var1> <exp1>)
      (<var2> <exp2>))
   <body>)
+; is equivalent to:
+((lambda (<var1> <var2>)
+   <body>)
+<exp1> <exp2>)
 ```
 
 - We don't need a new mechanism in the interpreter for `let`
@@ -482,3 +486,14 @@ expressions. They are simply syntatic sugar for the underlying `lambda`
 _application_ 
 - A `let` expression applies an underlying lambda with the expressions as
 arguments to the `lambda` which substitutes the expressions in the body.
+- `let` allows us to bind variables as locally as possible to where they
+are to be used, but the variables' values are computed outside the `let`
+expression.
+
+```scm
+(define x 2)
+(let ((x 3)
+      (y (+ x 2)))
+  (* x y)) ; <- This will have a value of 12 because, inside the body of
+           ; the let, x will be 3 and y will be 4 (which is the outer x plus 2)
+```
