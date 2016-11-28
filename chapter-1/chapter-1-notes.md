@@ -497,3 +497,5 @@ expression.
   (* x y)) ; <- This will have a value of 12 because, inside the body of
            ; the let, x will be 3 and y will be 4 (which is the outer x plus 2)
 ```
+
+
