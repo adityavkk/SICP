@@ -128,4 +128,48 @@
 (define (even? n)
   (= (remainder n 2) 0))
 
+; Finding roots by half-interval method
+(define (search f neg-point pos-point)
+  (let ((midpoint (average neg-point pos-point)))
+    (if (close-enough? neg-point pos-point)
+        midpoint
+        (let ((test-value (f midpoint)))
+          (cond ((positive? test-value)
+                 (search f neg-point midpoint))
+                ((negative? test-value)
+                  (search f midpoint pos-point))
+                (else midpoint))))))
 
+(define (close-enough? x y)
+  (< (abs (- x y)) 0.001))
+
+(define (half-interval-method f a b)
+  (let ((a-val (f a))
+        (b-val (f b)))
+    (cond ((and (negative? a-val) (positive? b-val))
+            (search f a b))
+          ((and (positive? a-val) (negative? b-val))
+            (search f b a))
+          (else
+            (error "Values are not of opposite signs" a b)))))
+
+(define pi (half-interval-method sin 2.0 4.0))
+(display pi)
+(newline)
+(define root-of-x^3-2x 
+  (half-interval-method (lambda (x) (- (* x x x) (* 2 x)))
+                        1.0
+                        2.0))
+(display root-of-x^3-2x)
+(newline)
+
+(define (fixed-point f first-guess)
+  (define (try guess)
+    (let((next (f guess)))
+      (if (close-enough? next guess)
+          next
+          (try next))))
+  (try first-guess))
+
+(display (fixed-point cos 1.0))
+(newline)

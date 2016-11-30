@@ -500,3 +500,75 @@ expression.
 
 ### 1.3.3 Procedures as General Methods
 
+#### Finding roots of equations by the half-interval method
+
+- Given points `a`, `b`, and a continuous function `f` s.t. `f(a) < 0 < f(b)`
+ then we can reduce the interval between `a` and `b` in half by
+ averaging them i.e. `x = (a + b) / 2` and checking to see if `f(x)` is
+ within some tolerance of `0`. If `f(x) > 0` we know that `f(x)` has
+ a zero between `a` and `x` and we can repeat the process. Otherwise,
+ the zero is between `x` and `b` and we can recursively check this
+ interval. 
+
+- Because we're halving the interval `L` for each check and stopping once we
+hit some fraction of the interval `T` this procedure takes `O(log(L/T))`
+steps to terminate.
+
+```scm
+; Finding roots by half-interval method
+(define (search f neg-point pos-point)
+  (let ((midpoint (average neg-point pos-point)))
+    (if (close-enough? neg-point pos-point)
+        midpoint
+        (let ((test-value (f midpoint)))
+          (cond ((positive? test-value)
+                 (search f neg-point midpoint))
+                ((negative? test-value)
+                  (search f midpoint pos-point))
+                (else midpoint))))))
+
+(define (close-enough? x y)
+  (< (abs (- x y)) 0.001))
+
+(define (half-interval-method f a b)
+  (let ((a-val (f a))
+        (b-val (f b)))
+    (cond ((and (negative? a-val) (positive? b-val))
+            (search f a b))
+          ((and (positive? a-val) (negative? b-val))
+            (search f b a))
+          (else
+            (error "Values are not of opposite signs" a b)))))
+
+(define pi (half-interval-method sin 2.0 4.0))
+(define root-of-x^3-2x 
+  (half-interval-method (lambda (x) (- (* x x x) (* 2 x)))
+                        1.0
+                        2.0))
+(display root-of-x^3-2x)
+```
+
+#### Finding Fixed Points of Functions
+
+- We can write a procedure to find the fixed point of a function by
+repeatedly applying the function to an initial guess and reapplying it
+to the result of the function application
+
+```scm
+(define (fixed-point f first-guess)
+  (define (try guess)
+    (let((next (f guess)))
+      (if (close-enough? next guess)
+          next
+          (try next))))
+  (try first-guess))
+```
+
+- the `sqrt` procedure can be thought of as the fixed point of the
+average damped function `f(y) = (y + x/y)/2`
+
+```scm
+(define (sqrt x)
+  (fixed-point (lambda (y) (average y (/ x y)))
+               1.0))
+```
