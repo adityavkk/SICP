@@ -498,4 +498,5 @@ expression.
            ; the let, x will be 3 and y will be 4 (which is the outer x plus 2)
 ```
 
+### 1.3.3 Procedures as General Methods
 

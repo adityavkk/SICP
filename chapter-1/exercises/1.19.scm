@@ -56,5 +56,5 @@
       #t
       ((display (fib n))(run-fibs (- n 1)))))
 
-(run-fibs 10)
+(run-fibs 15)
 
