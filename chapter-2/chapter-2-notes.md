@@ -35,3 +35,5 @@ this way.
 adequate way to represent pairs, since it fulfills the only axion that
 pairs need to fulfill.
 - This style of programming is often called _message passing_
+
+## 2.2 Hierarchical Data and the Closure Property
