@@ -123,4 +123,19 @@ make a new list:
       (cons (car list1) (append (cdr list1) list2))))
 ```
 
+#### Mapping over lists
+- `map` takes as arguments a procedure of oneargument and a list, and
+returns a list of the results produced by applying the procedure of each
+element in thelist
 
+```scm
+(define (map proc xs)
+  (if (null? xs)
+      xs
+      (cons (proc (car xs))
+            (map proc (cdr xs)))))
+
+(map abs (list -5.0 -6.0 1.2 17)) ; <- (5.0 6.0 1.2 17)
+(map (lambda (x) (* x x))
+     (list 1 2 3 4)) ; <- (1 4 9 16)
+```
