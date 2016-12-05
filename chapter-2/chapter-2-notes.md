@@ -153,3 +153,14 @@ of a tree can be thought of as another tree.
                  (count-leaves (cdr x))))))
 ```
 
+#### Mapping over trees (TODO)
+
+### 2.2.3 Sequences as Conventional Interfaces (TODO)
+- 
+## 2.3 Symbolic Data
+- Working with arbitrary symbols as data
+
+### 2.3.1 Quotation
+
+
+
