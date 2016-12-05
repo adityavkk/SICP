@@ -139,3 +139,17 @@ element in thelist
 (map (lambda (x) (* x x))
      (list 1 2 3 4)) ; <- (1 4 9 16)
 ```
+
+### 2.2.2 Hierarchical Structures
+- Sequences whose elements are sequences can be thought of as trees
+- Recursion is a natural tools for dealing with trees. Since each branch
+of a tree can be thought of as another tree.
+
+```scm
+(define (count-leaves x)
+  (cond ((null? x) 0)
+        ((not (pair? x)) 1)
+        (else (+ (count-leaves (car x))
+                 (count-leaves (cdr x))))))
+```
+
