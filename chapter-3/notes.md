@@ -127,6 +127,49 @@ and `withdraw` that access `balance` and an additional procedure
 `dispatch` that takes a 'message' as input and returns one of the two
 local procedures.
 
+#### 3.1.2 The Benefits of Introducing Assignment 
+
+- The power of introducing assignment can be seen by the design of
+a procedure `rand` that, whenever it is called, returns an integer
+chosen at random.
+
+- Let's assume that we have a procedure `rand-update` that has the
+property that if we start with a given number `x1` and form
+
+```scm
+(rand-update (rand-update x1))
+```
+
+then the sequences `x1, x2, x3...` will have the desired statistical
+properties of uniformity.
+
+- We can then implement `rand` as a procedure with a local state
+variable x that is initialized to some fixed value `random-init`. Each
+call to `rand` computes `rand-update` of the current value of `x`,
+returns this as the random number, and also stores this as the new value
+of `x`
+
+```scm
+(define rand
+  (let ((x random-init))
+    (lambda ()
+      (set! x (rand-update x))
+      x)))
+```
+
+#### Sameness and change
+
+- The issue surfacing here is more profound than the mere breakdown of
+a particular model of computation. As soon as we introduce change into
+our computational models, many notions that were previously
+straightforward become problematical.
+- Consider the concept of two things being __"the same"__, it becomes
+much more difficult to make the claim that two things are __"the same"__
+- A language that supports the concept that "equals can be substituted
+for equals" in an expression without changing the value of the
+expression is said to be __referentially transparent__. 
+- "Once we forgo referential transparency, the notion of what it means for computational objects to be "the same'' becomes difficult to capture in a formal way. Indeed, the meaning of "same'' in the real world that our programs model is hardly clear in itself. In general, we can determine that two apparently identical objects are indeed "the same one'' only by modifying one object and then observing whether the other object has changed in the same way. But how can we tell if an object has "changed" other than by observing the "same' object twice and seeing whether some property of the object differs from one observation to the next? Thus, we cannot determine "change" without some a priori notion of "sameness, and we cannot determine sameness without observing the effects of change."
+
 ### 3.2 The Environment Model of Evaluation
 
 - Because we've destroyed the sustitution model,
@@ -134,7 +177,7 @@ local procedures.
 environment model
 ```scm
 ; y is not bound or is free in this expression
-(labmda (x) (* x y))
+(lambda (x) (* x y))
 ; * is a free variable
 (lambda (y) ((lambda (x) (* x y)) 3))
 ```
