@@ -365,9 +365,11 @@ transform of the preceding one:
 - Finally, we can form a sequence by taking the first term in each row
 of the tableau: 
 
-```scm (define (accelerated-sequence transform s) (stream-map stream-car
-(define (accelerated-sequence transform s)
-  (stream-map stream-car
+```scm 
+(define (accelerated-sequence transform s) 
+   (stream-map stream-car
+  (define (accelerated-sequence transform s)
+    (stream-map stream-car
               (make-tableau transform s)))
 ```
 
