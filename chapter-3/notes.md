@@ -316,3 +316,122 @@ these pprocedures with the same serializer.
 
 - This guarantees tha tthe value of the variable cannot be cahnged
 between an access and the corresponding assignment.
+
+## 3.5.3 Exploiting The Stream Paradigm
+- The Stream approach can allow us to build systems with different
+module boundries than systems organized around assignment to state
+variables. For instance, we can think of an entire time series as
+a focus of interest, rather than the values of the state variables at
+individual moments. This makes it convenient to combine and compare
+components of state from different moments.
+
+#### Formulating iterations as stream processes
+- In our original sqrt procedure, we made these guesses be the
+successive values of a state variable. Instead we can generate the
+infinite stream of guesses, starting with an initial guess of 1:
+
+```scm
+; procedure that improves guesses
+(define (sqrt-improve guess x)
+  (average guess (/ x guess)))
+
+; with streams
+(define (sqrt-stream x)
+  (define guesses
+    (stream-cons 1.0
+                 (stream-map (lambda (guess)
+                              (sqrt-improve guess x)
+                             guesses)))))
+```
+
+- Our use of the stream of states approach is not much different from
+updating state variables.
+- However, we can do some interesting things with streams, we can
+transform a stream with a sequence accelerator that converts a sequence
+of approximations to a new sequence that converges to the same value as
+the original, only faster
+- Even better, we can accelerate the accelerated sequence, and
+recursively accelerate that, and so on.
+- Namely, we can create a stream of streams in wich each stream is the
+transform of the preceding one:
+
+```scm
+(define (make-tableau transform s)
+  (cons-stream s
+               (make-tableau transform
+                             (transform s))))
+```
+
+- Finally, we can form a sequence by taking the first term in each row
+of the tableau: 
+
+```scm (define (accelerated-sequence transform s) (stream-map stream-car
+(define (accelerated-sequence transform s)
+  (stream-map stream-car
+              (make-tableau transform s)))
+```
+
+#### Infinite streams of pairs
+
+- Supppose we want to generalize the `prime-sum-pairs` procedure to
+produce the stream of pairs of all integers `(i, j)` with `i <= j` such
+that `i + j` is prime.
+- If `int-pairs` is the sequence of all the pairs of integers such that
+the first is less than or equal to the second then our required stream
+is simply:
+
+```scm
+(stream-filter (lambda (pair)
+                 (prime? (+ (car pair) (cadr pair))))
+               int-pairs)
+```
+
+- Our problem is to produce the stream `int-pairs`. It happens to be the
+top diagonal of the matrix formed by all possible pairs. 
+- For instance, `(S0, T0), (S0, T1), (S0, T2), ..., (S1, T1), (S1, T2),`
+and so on
+- Call the general stream of pairs `(pairs S T)`, and consider it to be
+composed of three parts: the pair `(S0, T0)`, the rest of the pairs in
+the first row, and the remaining pairs.
+- Observe that the _pairs that are not in the first row_ is (recursively) the 
+pairs formed from `(stream-cdr S)` and `(stream-cdr T)`
+- The second piece, i.e. _the rest of the first row_ is given by:
+
+```scm
+(stream-map (lambda (x) (list (stream-car S) x))
+            (stream-cdr T))
+```
+
+- Then we can form our streams of pairs as follows:
+
+```scm
+(define (pairs s t)
+  (cons-stream
+    (list (stream-car s) (stream-car t))
+    (<combine-in-some-way>
+      (stream-map (lambda (x) (list (stream-car s) x))
+                  (stream-cdr t))
+      (pairs (stream-cdr s) (stream-cdr t)))))
+```
+
+- In order to complete the procedure, we must choose some way to combine
+the inner streams. One idea is to use the stream analog of the `append`
+procedure which essentially appends s2 onto the end of s1.
+- Therefore, it becomes unsuitable for infinite streams. In order to
+handle infinite streams, we need to devise an order of combination that
+ensures that every element will eventually be reached if we let our
+program run long enough.
+- One way to accomplish this is with the following `interleave`
+procedure
+
+```scm
+(define (interleave s1 s2)
+  (if (stream-null? s1)
+      s2
+      (cons-stream (stream-car s1)
+                   (interleave s2 (stream-cdr s1)))))
+```
+
+- Since `interleave` takes elements alternately from two streams, every
+element of the second stream will eventually find its way into the
+interleaved stream, even if the first stream is infinite.
