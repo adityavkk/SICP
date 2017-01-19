@@ -18,11 +18,8 @@
                           (stream-cons s1car
                                       (merge (stream-rest s1)
                                               (stream-rest s2)))))))))
-(define ones (stream-cons 1 ones))
-(define doubles (stream-cons 1 (scale-stream doubles 2)))
-(define triples (stream-cons 1 (scale-stream triples 3)))
-(define quintuples (stream-cons 1 (scale-stream quintuples 5)))
 
 (define S (stream-cons 1
-                       (merge doubles
-                              (merge triples quintuples))))
+                       (merge (scale-stream S 2)
+                              (merge (scale-stream S 3)
+                                     (scale-stream S 5)))))
