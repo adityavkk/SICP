@@ -437,3 +437,50 @@ procedure
 - Since `interleave` takes elements alternately from two streams, every
 element of the second stream will eventually find its way into the
 interleaved stream, even if the first stream is infinite.
+
+#### Streams as Signals
+- We can use streams to model signal-processing systems in a very direct
+way, representing the values of a signal at successive time intervals as
+consecutive elements of a stream.
+- We can emplement an integrator that, for an input stream x, an initial
+value C, and a small dt, accumulates the sum and returns the stream of
+values S.
+
+```scm
+(define (integral integrand initial-value dt)
+  (define int
+    (cons-stream initial-value
+                 (add-streams (scale-stream integrand dt)
+                              int))))
+```
+
+### 3.5.4 Streams and Delayed Evaluation
+- The `integral` procedure at the end of the preceding section shows how
+we can use streams to model signal-processing systems that contain
+feedback loops. 
+- The feedback loop for the integrator is modeled by the fact that
+`integral`'s internal stream `int` is defined in terms of itself.
+- The interpreter's ability to deal with such an implicit definition
+depends on the `delay` that is incorporated into `cons-stream`. Without
+this `delay`, the interpreter could not construct `int` before
+evaluating both arguments to `cons-stream`, which would in turn require
+that `int` already be defined.
+- Sometimes, stream models with loops may require uses of `delay` beyond
+the "hidden" `delay` supplied by the `cons-stream`.
+- One example of such a stream is the signal-processing system for
+solving the differential equation `dy/dt = f(y)` 
+![](https://i.imgur.com/S8cRrCi.png)
+
+- Assuming we're given an initial value y0 for y, we could try to model
+the above system using the procedure 
+
+```scm
+(define (solve f y0 dt)
+  (define y (integral dy y0 dt))
+  (define dy (stream-map f y))
+  y)
+```
+
+- This procedure, however, does not work, because in the first line of
+`solve` the call to `integral` requires that the input `dy` be defined,
+which does not happen until the second line to `solve`
