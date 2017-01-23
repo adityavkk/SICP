@@ -175,3 +175,73 @@ designated environment
 
 ### 4.1.2 Representing Expressions
 
+### 4.1.3 Evaluator Data Structures
+- In addition to defining the external syntax of expressions, the
+evaluator implementation must also define the data structures that the
+evaluator manipulates internally, as part of the execution of a program,
+such as the representation of procedures and environments and the
+representation of true and false
+
+#### Testing of predicates
+- For conditionals, we accept anything to be true that is not the
+explicit `false` object
+
+```scm
+(define (true? x)
+  (not (eq? x false)))
+
+(define (false> x)
+  (eq? x false))
+```
+
+#### Representing procedures
+- To handle primitives, we assume that we have available the following
+procedures: 
+  - `(apply-primitive-procedure <proc> <args>)`, which applies the given
+  primitive procedure ot the argument values in the list `<args>` and
+  returns the result of the application
+  - `(primitive-procedure? <proc>)`, which tests whether `<proc>` is
+  a primitive procedure
+
+- Compound procedures are constructed from parameters, procedure bodies,
+and environments using the constructor make-procedure:
+
+```scm
+(define (make-procedure parameters body env)
+  (list 'procedure parameters body env))
+(define (compound-procedure? p)
+  (tagged-list? p 'procedure))
+(define (procedure-parameters p) (cadr p))
+(define (procedure-body p) (caddr p))
+(define (procedure-environment p) (cadddr p))
+```
+
+#### Operations on Environments
+- The evaluator needs operations for manipulating environments. An
+environment is a sequence of grames, where each frame is a table of
+bindings that associate variables with their corresponding values. We
+use the following operations for manipulating environments:
+  - `(lookup-variable-value <var> <env>)`, returns the value bound to
+  the symbol in the env
+  - `(extend-environment <vars> <values> <base-env>)`, returns a new
+  environment, consisting of a new grame in which the symbold in the
+  list `<vars>` are bound to the corresponding elements in the list
+  `<values>`, where the envlosing environment is the environment
+  `<base-env>`.
+  - `(define-variable! <var> <value> <env>)`, adds to the first frame in
+  the `<env>` a new binding that associates the variable `<var>` with
+  the value `<value>`
+  - `(set-variable-value! <var> <value> <env>)`, changes the binding of
+  the variable `<var>` in the environment `<env>` so that the variable
+  is now bound to the value `<value>`, or signals an error if the
+  variable is unbound.
+
+- To implement these operations we represent an environment as a list of
+frames. The enclosing environment of an environment is the `cdr` of the
+list. The empty environment is simply the empty list.
+
+```scm
+(define (enclosing-environment env) (cdr env))
+(define (first-frame env) (car env))
+(define the-empty-environment '())
+```
