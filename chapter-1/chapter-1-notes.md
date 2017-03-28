@@ -1,4 +1,4 @@
-#Building Abstractions with Proceduers
+# Building Abstractions with Proceduers
 - A computational processes are abstract beings that inhabit computers.
 - They manipulate other abstract things called data. 
 - They are controlled by a pattern of rules called programs
@@ -19,6 +19,7 @@ programs into complex ones.
   - __means of abstraction__ - how compound elements can be named and
   manipulated as units
 - Two kinds of elements in programming: proceduers and data
+
 
 #### 1.1.2 Naming and the Environment 
 
@@ -43,6 +44,7 @@ provides us
 (define (f a) (sum-of-squares (+ a 1) (* a 2))) 
 ; f (a) = (a + 1)^2 + (2*a)^2 
 ``` 
+
 
 #### 1.1.6 Conditional Expressions and Predicates (1.1.6)
 - __Case analysis__

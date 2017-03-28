@@ -1,2 +1,2 @@
 # SICP
-Notes and Exercises from Structure and Interpretation of Computer Programs
+Notes and Exercises from Structure and Interpretation of Computer Programs written in Scheme
